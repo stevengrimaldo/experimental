@@ -1,0 +1,6 @@
+dist
+node_modules
+_tasks
+src
+tools
+npm-debug.log

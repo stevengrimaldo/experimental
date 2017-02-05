@@ -1,0 +1,40 @@
+{
+  "extends": "airbnb",
+
+  "globals": {
+    "PWD": true,
+    "ENV": true,
+    "envMode": true,
+    "envUrls": true
+  },
+
+  "env": {
+    "es6": true,
+    "browser": true
+  },
+
+  ecmaFeatures: {
+    modules: true
+  },
+
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+
+  "rules": {
+    "strict": [ 2, "global" ],
+    "no-console": "off",
+    "func-names": "off",
+    "array-bracket-spacing": "off",
+    "indent": [ 2 ],
+    "comma-dangle": "off",
+    "prefer-template": "off",
+    "curly": "off",
+    "no-return-assign": "off",
+    "no-sequences": "off",
+    "no-nested-ternary": "off",
+    "no-param-reassign": "off",
+    "max-len": [1, {"code": 200, "tabWidth": 2, "ignoreUrls": true}]
+  }
+}

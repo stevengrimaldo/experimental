@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Asteroids</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        background: none;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+      #scripts {
+        display: none;
+      }
+    </style>
+  </head>
+<body>
+  <div id="container"></div>
+  <div id="scripts">
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/Detector.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/TrackballControls.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/libs/stats.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/MTLLoader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/GlitchPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/MaskPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/CanvasRenderer.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/Projector.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DigitalGlitch.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DotScreenShader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/RGBShiftShader.js"></script>
+    <script>
+      if (!Detector.webgl) {
+        Detector.addGetWebGLMessage();
+      }
+
+      var camera, scene, renderer, obj;
+
+      function initCamera() {
+        // initialize your camera using the "Perspective Camera"
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+
+        camera.updateProjectionMatrix();
+        camera.position.set(200, 200, 200);
+        camera.lookAt(camera.position);
+      }
+      function initScene() {
+        // initialize your scene
+        scene = new THREE.Scene();
+      }
+      function initRenderer() {
+        // initialize webgl - set antialiasing to true for smooth edges
+        renderer = new THREE.WebGLRenderer({antialias: true});
+
+        // set the size of what you're viewing to be the dimensions of your screen
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        renderer.setClearColor('#ffffff');
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // put your scene into the DOM
+        document.getElementById('container').appendChild(renderer.domElement);
+      }
+      function initLights() {
+          var alight = new THREE.AmbientLight(0xffffff, .8);
+          scene.add(alight);
+
+          // var light = new THREE.PointLight(0xffffff, 0.8);
+          // light.position.set(100, 200, 100);
+          // scene.add(light);
+
+          // var sphereSize = 1;
+          // var pointLightHelper = new THREE.PointLightHelper(light, sphereSize);
+          // scene.add(pointLightHelper);
+
+          // var light2 = new THREE.PointLight(0xd7f0ff, 0.2);
+          // light2.position.set(200, 200, 100);
+          // scene.add(light2);
+
+          // var sphereSize = 1;
+          // var pointLightHelper2 = new THREE.PointLightHelper(light2, sphereSize);
+          // scene.add(pointLightHelper2);
+
+          // var light3 = new THREE.PointLight(0xffffff, 0.5);
+          // light3.position.set(150, 200, -100);
+          // scene.add(light3);
+
+          // var sphereSize = 1;
+          // var pointLightHelper3 = new THREE.PointLightHelper(light3, sphereSize);
+          // scene.add(pointLightHelper3);
+      }
+      function initObjects() {
+        function initAsteroids() {
+          function initAsteroidOne() {
+            var asteroidJson = 'images/textures/asteroid.json';
+            var jsonLoader = new THREE.JSONLoader();
+            jsonLoader.load(asteroidJson, function(geometry, materials) {
+              var material = new THREE.MeshFaceMaterial(materials);
+              var mesh = new THREE.Mesh(geometry, material);
+              scene.add(mesh);
+            });
+          }
+          function initAsteroidTwo() {
+            var asteroidObj = 'images/assets/models/Asteroids_Single_B.obj';
+            var objLoader = new THREE.OBJLoader();
+            objLoader.load(asteroidObj, function(object) {
+
+              asteroidMat = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                map: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_bump.jpg'),
+                aoMap: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_ao.jpg'),
+                specularMap: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_specular.jpg'),
+                normalMap: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_normal.jpg'),
+                shininess: 1,
+                normalScale: new THREE.Vector2(1, 1)
+              });
+
+              object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = asteroidMat;
+                }
+              });
+
+              object.position.set(200, 200, 200);
+              scene.add(object);
+            });
+          }
+          function initAsteroidThree() {
+            var asteroidObj = 'images/assets/models/asteroid.obj';
+            var objLoader = new THREE.OBJLoader();
+            objLoader.load(asteroidObj, function(object) {
+
+              asteroidMat = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                map: new THREE.TextureLoader().load('images/assets/images/textures/Landscape_shapeSurface_Color.png'),
+                aoMap: new THREE.TextureLoader().load('images/assets/images/textures/Landscape_shapeAmbient_Occlusion.png'),
+                specularMap: new THREE.TextureLoader().load('images/assets/images/textures/Landscape_shapeSpecular.jpg'),
+                normalMap: new THREE.TextureLoader().load('images/assets/images/textures/Landscape_shapeNormal.png'),
+                shininess: 1,
+                normalScale: new THREE.Vector2(1, 1)
+              });
+
+              object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = asteroidMat;
+                }
+              });
+
+              object.position.set(0, 0, 0);
+              scene.add(object);
+            });
+          }
+          function initAsteroidFour() {
+            var asteroidObj = 'images/assets/models/asteroid.dae';
+            var objLoader = new THREE.ColladaLoader();
+
+            objLoader.options.convertUpAxis = true;
+            objLoader.load(asteroidObj, function(collada) {
+
+              var dae = collada.scene;
+              var skin = collada.skins[0];
+
+              dae.position.set(0, 0, 0);
+              dae.scale.set(1.5, 1.5, 1.5);
+
+              scene.add(dae);
+            });
+          }
+
+          // initAsteroidOne();
+          initAsteroidTwo();
+          // initAsteroidThree();
+          initAsteroidFour();
+        }
+
+        initAsteroids();
+      }
+      function initOrbitControls() {
+        orbit = new THREE.OrbitControls(camera, renderer.domElement);
+        orbit.autoRotate = true;
+        orbit.autoRotateSpeed = 5;
+        axisHelper = new THREE.AxisHelper(200);
+        axisHelper.visible = true;
+        scene.add(axisHelper);
+        orbit.update();
+      }
+      function onWindowResize() {
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      function init() {
+        initCamera();
+        initScene();
+        initObjects();
+        initLights();
+        initRenderer();
+        initOrbitControls();
+      }
+      function animate() {
+        // setup loop so the scene renders at 60fps
+        requestAnimationFrame(animate);
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        // render scene & camera to viewport
+        renderer.render(scene, camera);
+      };
+
+      init();
+      animate();
+    </script>
+  </div>
+</body>
+</html>

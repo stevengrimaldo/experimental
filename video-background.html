@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Video Background</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+      .wrapper {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        overflow: hidden;
+      }
+      .container {
+        position: relative;
+        overflow: hidden;
+      }
+      .inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .background {
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        visibility: inherit;
+        opacity: 1;
+        width: 1918px;
+        height: 1078.88px;
+        transform: matrix(1.1, 0, 0, 1.1, 0, 0);
+      }
+      video {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+      }
+    </style>
+  </head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="inner">
+        <div class="background">
+          <video id="bgvid" playsinline autoplay muted loop>
+            <!-- WCAG general accessibility recommendation is that media such as background video play through only once. Loop turned on for the purposes of illustration; if removed, the end of the video will fade in the same way created by pressing the "Pause" button  -->
+            <source src="http://45.79.4.158/portfolio/videos/sunset_loop_desktop_1280.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="scripts">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/TweenMax.min.js"></script>
+    <script>
+      function centerVideo(video) {
+        var centerX = ((video.parent().width() >> 1) - (video.width() >> 1)) | 0,
+          centerY = ((video.parent().height() >> 1) - (video.height() >> 1)) | 0;
+
+        video.css({
+          'left': centerX,
+          'top': centerY
+        });
+
+        return;
+      }
+      function getProportion(video) {
+        var windowWidth = video.parent().width(),
+          windowHeight = video.parent().height(),
+          windowProportion = windowWidth / windowHeight,
+          origProportion = 979 / 550,
+          proportion = windowHeight / 550;
+
+        if (windowProportion >= origProportion) {
+          proportion = windowWidth / 979;
+        }
+
+        return proportion;
+      }
+      function setProportion(video) {
+        var proportion = getProportion(video);
+
+        video.width(proportion * 979);
+        video.height(proportion * 550);
+        video.parent().height(proportion * 550);
+
+        centerVideo(video);
+      }
+      setProportion($('#bgvid'));
+      $.fn.parallax = function(resistance, mouse) {
+        $el = $(this);
+        TweenMax.to($el, 0.2, {
+          x: -((mouse.clientX - (window.innerWidth / 2)) / resistance),
+          y: -((mouse.clientY - (window.innerHeight / 2)) / resistance),
+          scale: 1.1
+        });
+      };
+      $('.wrapper, .container').css({
+        width: window.innerWidth + 'px',
+        height: window.innerHeight + 'px'
+      });
+      $(document).mousemove(function(e) {
+        $('.background').parallax(-30, e);
+      });
+    </script>
+  </div>
+</body>
+</html>

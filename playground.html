@@ -1,0 +1,774 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Playground</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="https://cdn.rawgit.com/dataarts/dat.gui/master/build/dat.gui.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Rubik:500,700" rel="stylesheet" />
+    <style>
+      @font-face {
+        font-family: 'anuratiregular';
+        src: url('fonts/anurati-regular-webfont.woff2') format('woff2'),
+             url('fonts/anurati-regular-webfont.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        background: none;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+        color: #fff;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+      .sub-text {
+        font-family: 'anuratiregular';
+        font-weight: normal;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 13px;
+        line-height: 15px;
+        color: #fff;
+      }
+      .text {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        text-align: center;
+        transform: translateX(-50%) translateY(-50%);
+        z-index: 10;
+      }
+      .main-title {
+        font-size: 70px;
+        letter-spacing: 120px;
+        text-transform: uppercase;
+        font-family: 'anuratiregular';
+        font-weight: normal;
+        text-align: center;
+        transform: translateX(65px);
+        margin-top: 30px;
+        margin-bottom: 40px;
+      }
+      .button {
+        display: inline-block;
+        margin: 0auto;
+        position: relative;
+        overflow: hidden;
+      }
+      .button::before {
+        content: '';
+        width: 1px;
+        background-color: #fff;
+        display: inline-block;
+        position: absolute;
+        bottom: 0;
+        height: 40%;
+        z-index: 10;
+        left: 0;
+        transition: bottom 350ms ease-in, height 500ms ease-in;
+      }
+      .button::after {
+        width: 1px;
+        height: 100%;
+        bottom: 0;
+        right: 0;
+        content: '';
+        display: inline-block;
+        background-color: #fff;
+        position: absolute;
+        transition: height 250ms ease-in;
+      }
+      .outline::before {
+        content: '';
+        bottom: 0;
+        right: 89%;
+        height: 1px;
+        width: 11%;
+        background-color: #fff;
+        position: absolute;
+        transition: right 300ms ease-in, width 250ms ease-in;
+      }
+      .outline::after {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 90%;
+        width: 10%;
+        height: 1px;
+        background-color: #fff;
+        transition: left 350ms ease-in, width 250ms ease-in;
+      }
+      a {
+        color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 3px;
+        font-weight: 700;
+        font-family: 'Rubik', sans-serif;
+        width: 250px;
+        display: inline-block;
+        height: 72px;
+        line-height: 72px;
+        border: 1px solid rgba(255, 255, 255, .2);
+      }
+      a::before {
+        content: '';
+        bottom: 48px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1px;
+        height: 20px;
+        background-color: #fff;
+        position: absolute;
+        transition: height 250ms ease-in;
+      }
+      a::after {
+        content: '';
+        display: inline-block;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        height: 1px;
+        width: 45%;
+        background-color: #fff;
+        transition: width 250ms ease-in;
+      }
+      /* hover events */
+      .button:hover::before {
+        bottom: 68%;
+        height: 32%;
+      }
+      .button:hover::after {
+        height: 22%;
+      }
+      .button:hover .outline::before {
+        right: 0;
+        width: 30%;
+      }
+      .button:hover .outline::after {
+        left: 0;
+        width: 45%;
+      }
+      .button:hover a::before {
+        height: 10px;
+      }
+      .button:hover a::after {
+        width: 0;
+      }
+      .dg.ac {
+        z-index: 100 !important;
+      }
+      .grid {
+        background-image: url('images/grid.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: absolute;
+        z-index: 2;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .sound-controls {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        cursor: pointer;
+        line-height: 110px;
+        text-align: center;
+        width: 100px;
+        height: 100px;
+        background-color: rgba(0, 0, 0, .8);
+        position: absolute;
+        z-index: 10;
+      }
+      .sound-icon {
+        background-image: url('images/sound.svg');
+        background-size: 31px auto;
+        width: 33px;
+        height: 21px;
+        display: inline-block;
+      }
+      .flare {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+        background-image: url(images/lens_flare3.png);
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+      }
+      #scripts {
+        display: none;
+      }
+    </style>
+  </head>
+<body>
+  <div class="sound-controls" onclick="TogglePause()"><span class="sound-icon"></span></div>
+  <div class="text">
+    <div id="sub-text" class="sub-text">Explore</div>
+    <div id="main-title" class="main-title">Mars</div>
+    <div class="button">
+      <div class="outline">
+        <a href="#">Discover</a>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="grid"></div> -->
+  <div class="flare"></div>
+  <div id="container"></div>
+  <div id="scripts">
+    <script src="https://cdn.rawgit.com/goldfire/howler.js/master/dist/howler.min.js"></script>
+    <script src="https://cdn.rawgit.com/dataarts/dat.gui/master/build/dat.gui.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/Detector.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/TrackballControls.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/libs/stats.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/MTLLoader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/GlitchPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/MaskPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/CanvasRenderer.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/Projector.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DigitalGlitch.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DotScreenShader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/RGBShiftShader.js"></script>
+    <script>
+      // upload this below
+      if (!Detector.webgl) {
+        Detector.addGetWebGLMessage();
+      }
+      var scene, camera, renderer, marsGeometry, starsGeometry, marsMaterial, starsMaterial, mars, stars, ambientLight,
+        directionalLight, marsTexture, starsTexture, marsBump, loader, asteroids, asteroidObj, asteroidsHolder,
+        asteroidMat, pointLight, pointLight2, asteroidGeo, mesh, orbit, axisHelper, gui, sky, stars, planet, firstRing,
+        secondRing, firstHole, secondHole, thirdHole, fourthHole, fifthHole, sixthHole, seventhHole, marsShadow,
+        marsAsteroids, marsGlow, marsPlanet, composer, shape, marsShape, marsFlare, f9, astProps, ringCount,
+        mouseX = 0,
+        mouseY = 0,
+        newAsteroids = [],
+        loader = new THREE.OBJLoader(),
+        windowHalfX = window.innerWidth / 2,
+        windowHalfY = window.innerHeight / 2;
+      // upload this below
+      function mathRadians(e) {
+        return e * Math.PI / 180
+      }
+      // upload this below
+      function mathRandom(e, t, n) {
+        var r;
+        return n = n || !1,
+        r = void 0 === e && void 0 === t ? Math.random() : void 0 !== e && void 0 !== t ? Math.random() * (t - e + 1) + e : mathRandom(0, e),
+        n ? ~~r : r
+      }
+      var sound = new Howl({
+        src: ['images/sound.mp3'],
+        autoplay: true,
+        loop: true,
+        volume: 0.5,
+        onend: function() {
+          console.log('Finished!');
+        }
+      });
+      var myMusicID = sound.play();
+      myMusicID;
+      var paused = false;
+      var saveSeek;
+      function TogglePause() {
+          if (paused) {
+              sound.play();
+              paused = false;
+          } else {
+              sound.pause();
+              paused = true;
+          }
+      }
+      function initCamera() {
+        // initialize your camera using the "Perspective Camera"
+        camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, .1, 100000);
+
+        camera.updateProjectionMatrix();
+        camera.position.x = 0;
+        camera.position.y = 0;
+        camera.position.z = 4000;
+        camera.lookAt(camera.position);
+
+        gui = new dat.GUI();
+      }
+      function initScene() {
+        // initialize your scene
+        scene = new THREE.Scene();
+
+        var f1 = gui.addFolder('Scene');
+        f1.add(camera.position, 'z', 3000, 20000).name('Position Z');
+      }
+      // upload this below
+      function initText() {
+        var subProps = {
+          color: '#ffffff',
+          size: 13,
+          letterSpacing: 2
+        };
+        var titleProps = {
+          color: '#ffffff',
+          size: 70,
+          letterSpacing: 120,
+          position: 65,
+          marginTop: 30,
+          marginBottom: 40
+        };
+
+        var f12 = gui.addFolder('Title');
+        f12.add(titleProps, 'color').name('Size').onChange(function(value) {
+          document.querySelector('#main-title').style.color = value;
+        });
+        f12.add(titleProps, 'size', 18, 120).name('Size').step(1).onChange(function(value) {
+          document.querySelector('#main-title').style.fontSize = value + 'px';
+        });
+        f12.add(titleProps, 'letterSpacing', 0, 300).name('Kerning').onChange(function(value) {
+          document.querySelector('#main-title').style.letterSpacing = value + 'px';
+        });
+        f12.add(titleProps, 'position', 0, 100).name('Position X').onChange(function(value) {
+          document.querySelector('#main-title').style.transform = 'translateX(' + value + 'px)';
+        });
+        f12.add(titleProps, 'marginTop', 0, 200).name('Push Top').onChange(function(value) {
+          document.querySelector('#main-title').style.marginTop = value + 'px';
+        });
+        f12.add(titleProps, 'marginBottom', 0, 200).name('Push Bottom').onChange(function(value) {
+          document.querySelector('#main-title').style.marginBottom = value + 'px';
+        });
+
+        var f13 = gui.addFolder('Sub Title');
+        f13.add(subProps, 'color').name('Size').onChange(function(value) {
+          document.querySelector('#sub-text').style.color = value;
+        });
+        f13.add(subProps, 'size', 8, 32).name('Size').step(1).onChange(function(value) {
+          document.querySelector('#sub-text').style.fontSize = value + 'px';
+        });
+        f13.add(subProps, 'letterSpacing', 0, 20).name('Kerning').onChange(function(value) {
+          document.querySelector('#sub-text').style.letterSpacing = value + 'px';
+        });
+      }
+      // upload this below
+      function initLights() {
+        var props1 = {
+          lightColor: '#e2d2a2',
+          intensity: 3,
+          distance: 1400,
+          decay: 1
+        };
+
+        var props2 = {
+          lightColor: '#e2d2a2',
+          intensity: 3,
+          distance: 2800,
+          decay: 1
+        };
+
+        pointLight = new THREE.PointLight('#e2d2a2', 4, 1400, 1);
+        pointLight.position.set(1000, -550, 1450);
+        pointLight.color = new THREE.Color('#e2d2a2');
+        scene.add(pointLight);
+
+        var f3 = gui.addFolder('Point Light 1');
+        f3.add(props1, 'lightColor').onChange(function(value) {
+          pointLight.color = new THREE.Color(value);
+        });
+        f3.add(props1, 'intensity', 0, 10).onChange(function(value) {
+          pointLight.intensity = value;
+        });
+        f3.add(props1, 'distance', 0, 5000).onChange(function(value) {
+          pointLight.distance = value;
+        });
+        f3.add(props1, 'decay', 1, 5).step(1).onChange(function(value) {
+          pointLight.decay = value;
+        });
+        f3.add(pointLight.position, 'x', -5000, 5000);
+        f3.add(pointLight.position, 'y', -5000, 5000);
+        f3.add(pointLight.position, 'z', -5000, 5000);
+
+        pointLight2 = new THREE.PointLight('#e2d2a2', 2, 2800, 1);
+        pointLight2.position.set(0, 0, 2200);
+        pointLight2.color = new THREE.Color('#e2d2a2');
+        scene.add(pointLight2);
+
+        var f4 = gui.addFolder('Point Light 2');
+        f4.add(props2, 'lightColor').onChange(function(value) {
+          pointLight2.color = new THREE.Color(value);
+        });
+        f4.add(props2, 'intensity', 0, 10).onChange(function(value) {
+          pointLight2.intensity = value;
+        });
+        f4.add(props2, 'distance', 0, 5000).onChange(function(value) {
+          pointLight2.distance = value;
+        });
+        f4.add(props2, 'decay', 1, 5).step(1).onChange(function(value) {
+          pointLight2.decay = value;
+        });
+        f4.add(pointLight2.position, 'x', -5000, 5000);
+        f4.add(pointLight2.position, 'y', -5000, 5000);
+        f4.add(pointLight2.position, 'z', -5000, 5000);
+      }
+      function initRenderer() {
+        // initialize webgl - set antialiasing to true for smooth edges
+        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+
+        renderer.setClearColor(0x000000, 0);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // set the size of what you're viewing to be the dimensions of your screen
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // put your scene into the DOM
+        document.getElementById('container').appendChild(renderer.domElement);
+      }
+      // upload this below
+      function initObjects() {
+        function initSky() {
+          var skyGeo = new THREE.SphereGeometry(1, 64, 64),
+            skyTex = new THREE.TextureLoader().load('images/stars.jpg'),
+            size = 6000,
+            n = 7,
+            skyMat = new THREE.MeshBasicMaterial({
+              map: skyTex,
+              side: THREE.BackSide
+            });
+
+          skyTex.wrapS = THREE.RepeatWrapping,
+          skyTex.wrapT = THREE.RepeatWrapping;
+          skyTex.repeat.set(n, n / 1);
+
+          sky = new THREE.Mesh(skyGeo, skyMat);
+          sky.position.x = 0;
+          sky.position.y = 0;
+          sky.scale.set(size, size, size);
+
+          var f2 = gui.addFolder('Sky');
+          f2.add(sky.position, 'x', -10000, 10000).name('Position Left/Right');
+          f2.add(sky.position, 'y', -10000, 10000).name('Position Up/Down');
+          f2.add(sky.position, 'z', -20000, 20000).name('Position Depth');
+
+          scene.add(sky);
+        }
+        function initStars() {
+          var starGeo = new THREE.Geometry,
+            starMat = new THREE.PointsMaterial({
+              size: 1,
+              color: new THREE.Color('#ffffff'),
+              transparent: false,
+              opacity: 1
+            });
+
+          for (var count = 1000, t = 50, n = 50, i = 0; count > i; i++) {
+            var y = mathRandom(-6000, 1000),
+              x = mathRandom(1, n) * t * Math.cos(2 * Math.PI * i / count),
+              z = mathRandom(1, n) * t * Math.sin(2 * Math.PI * i / count),
+              star = new THREE.Vector3(x, y, z);
+
+            starGeo.vertices.push(star);
+          }
+
+          stars = new THREE.Points(starGeo, starMat);
+
+          scene.add(stars);
+        }
+        function initMars() {
+          var marsGeo = new THREE.PlaneGeometry(1, 1);
+
+          function initShadow() {
+            var shadowTex = new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load('images/mars-shadow.png'),
+                transparent: true,
+                blending: THREE.NormalBlending,
+                side: THREE.DoubleSide
+              }),
+              originalWidth = 2930 * 1.3,
+              originalHeight = 3119 * 1.3,
+              shadow = new THREE.Mesh(marsGeo, shadowTex);
+
+            shadow.minFilter = THREE.LinearFilter;
+            shadow.scale.x = originalWidth;
+            shadow.scale.y = originalHeight;
+
+            shadow.position.y = -825;
+            shadow.position.z = 0;
+
+            var f6 = gui.addFolder('Shadow');
+            f6.add(shadow.scale, 'x', 1024, 10000).name('Size').onChange(function(value) {
+              var newHeight = (originalHeight / originalWidth) * value;
+              shadow.scale.x = value;
+              shadow.scale.y = newHeight;
+            });
+            f6.add(shadow.position, 'y', -10000, 10000).name('Position Y');
+            f6.add(shadow.position, 'z', -20000, 20000).name('Position Z');
+
+            marsShadow = shadow;
+            scene.add(shadow);
+          }
+          function initGlow() {
+            var glowTex = new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load('images/atmosphere.png'),
+                transparent: true,
+                blending: THREE.NormalBlending,
+                side: THREE.DoubleSide
+              }),
+              originalWidth = 2174 * 1.06,
+              originalHeight = 2174 * 1.06,
+              glow = new THREE.Mesh(marsGeo, glowTex);
+
+            glow.minFilter = THREE.LinearFilter;
+            glow.scale.x = originalWidth;
+            glow.scale.y = originalHeight;
+
+            glow.position.y = -900;
+            glow.position.z = 0;
+
+            var f7 = gui.addFolder('Glow');
+            f7.add(glow.scale, 'x', 1024, 10000).name('Size').onChange(function(value) {
+              var newHeight = (originalHeight / originalWidth) * value;
+              glow.scale.x = value;
+              glow.scale.y = newHeight;
+            });
+            f7.add(glow.position, 'y', -10000, 10000).name('Position Y');
+            f7.add(glow.position, 'z', -20000, 20000).name('Position Z');
+
+            marsGlow = glow;
+            scene.add(glow);
+          }
+          function initShape() {
+            // create your shape (here is a sphere)
+            var newGeometry = new THREE.SphereGeometry(0.5, 64, 64);
+
+            // setup the materials for your objects
+            var newMaterial = new THREE.MeshPhongMaterial({
+              map: new THREE.TextureLoader().load('images/Marte_HD_v2.jpg'),
+              bumpMap: new THREE.TextureLoader().load('images/Marte_Bump_v2.jpg'),
+              normalMap: new THREE.TextureLoader().load('images/Marte_Normal_v1.jpg'),
+              bumpScale: 0.5,
+              normalScale: new THREE.Vector2(0.5, 0.5),
+              specular: new THREE.Color('#e2d2a2'),
+              shininess: 0
+            }),
+            size = 2048;
+
+            // combine your object and material to create your object
+            shape = new THREE.Mesh(newGeometry, newMaterial);
+
+            // set the rotation of the object
+            shape.rotation.x = -0.8;
+            shape.rotation.y = 2.7;
+            shape.rotation.z = 0.4;
+
+            shape.scale.set(size, size, size);
+
+            // set the object's position in the scene
+            shape.position.y = -900;
+            shape.position.z = 0;
+
+            var f5 = gui.addFolder('Planet');
+            f5.add(shape.scale, 'x', 1024, 10000).name('Size').onChange(function(value) {
+              shape.scale.set(value, value, value);
+            });
+            f5.add(shape.position, 'y', -10000, 10000).name('Position Y');
+            f5.add(shape.position, 'z', -20000, 20000).name('Position Z');
+
+            f5.add(shape.rotation, 'x', -5000, 5000).name('Rotation X');
+            f5.add(shape.rotation, 'y', -5000, 5000).name('Rotation Y');
+            f5.add(shape.rotation, 'z', -5000, 5000).name('Rotation Z');
+
+            marsShape = shape;
+
+            // add your objects to the scene
+            scene.add(shape);
+          }
+
+          initShadow();
+          initGlow();
+          initShape();
+        }
+        function initAsteroids() {
+          asteroidObj = 'images/assets/models/Asteroids_Single_B.obj';
+
+          astProps = {
+            'ringCount': 5,
+            'ringDiameter': 1000,
+            'ringSpacing': 50,
+            'asteroidCount': 120,
+            'minAsteroidSize': 0.3,
+            'maxAsteroidSize': 0.8
+          };
+
+          ringCount = astProps['ringCount'];
+          var ringDiameter = astProps['ringDiameter'];
+          var ringSpacing = astProps['ringSpacing'];
+          var asteroidCount = astProps['asteroidCount'];
+          var minAsteroidSize = astProps['minAsteroidSize'];
+          var maxAsteroidSize = astProps['maxAsteroidSize'];
+
+          f9 = gui.addFolder('Asteroids');
+          // f9.add(astProps, 'ringCount', 1, 20).name('Ring Count').onChange(function(value) {
+          //   astProps['ringCount'] = value;
+          // });
+          // f9.add(astProps, 'ringDiameter', 500, 5000).name('Ring Size').onChange(function(value) {
+          //   astProps['ringDiameter'] = value;
+          // });
+          // f9.add(astProps, 'ringSpacing', 10, 500).name('Ring Spacing').onChange(function(value) {
+          //   astProps['ringSpacing'] = value;
+          // });
+          // f9.add(astProps, 'asteroidCount', 5, 200).name('Ast. Count').onChange(function(value) {
+          //   astProps['asteroidCount'] = value;
+          // });
+          // f9.add(astProps, 'minAsteroidSize', 0.1, 1).name('Min. Ast. Size').onChange(function(value) {
+          //   astProps['minAsteroidSize'] = value;
+          // });
+          // f9.add(astProps, 'maxAsteroidSize', .1, 2).name('Max. Ast. Size').onChange(function(value) {
+          //   astProps['maxAsteroidSize'] = value;
+          // });
+
+          loader.load(asteroidObj, function(object) {
+            asteroidsHolder = new THREE.Object3D();
+            asteroids = new THREE.Object3D();
+
+            asteroidMat = new THREE.MeshPhongMaterial({
+              color: 0xffffff,
+              map: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_bump.jpg'),
+              aoMap: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_ao.jpg'),
+              specularMap: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_specular.jpg'),
+              normalMap: new THREE.TextureLoader().load('images/assets/images/textures/asteroid_b_normal.jpg'),
+              shininess: 1,
+              normalScale: new THREE.Vector2(1, 1)
+            });
+
+            object.traverse(function(child) {
+              if (child instanceof THREE.Mesh) {
+                child.material = asteroidMat;
+              }
+            });
+
+            asteroidsHolder.add(asteroids);
+            asteroidsHolder.rotation.x = mathRadians(-5);
+
+            for (rings = ringCount, diameter = ringDiameter, spacing = ringSpacing, count = asteroidCount, min = minAsteroidSize, max = maxAsteroidSize, c = min, h = 0; rings > h; h++) {
+              var asteroid = new THREE.Object3D;
+
+              c += max;
+
+              for (var d = diameter + h * spacing + h * spacing * h / 10, p = 0; count > p; p++) {
+                var newAsteroid = object.clone(),
+                  f = 100 * c,
+                  m = 100 * min,
+                  size = mathRandom(f, m) / 100;
+
+                newAsteroid.position.x = d * Math.cos(2 * Math.PI * p / count);
+                newAsteroid.position.y = mathRandom(-h * h / 10, -500 * c);
+                newAsteroid.position.z = d * Math.sin(2 * Math.PI * p / count);
+
+                newAsteroid.rotation.x = mathRadians(mathRandom(0, 360));
+                newAsteroid.rotation.y = mathRadians(mathRandom(0, 360));
+                newAsteroid.rotation.z = mathRadians(mathRandom(0, 360));
+                newAsteroid.scale.set(size, size, size);
+                asteroid.add(newAsteroid);
+                newAsteroids.push(newAsteroid);
+              }
+
+              asteroid.rotation.y = mathRadians(-20 * h);
+              asteroids.add(asteroid);
+            }
+
+            asteroids.position.y = -425;
+
+            f9.add(asteroids.position, 'y', -5000, 5000).name('Position Y');
+
+            asteroidsHolder.add(asteroids);
+            asteroidsHolder.rotation.x = mathRadians(-5);
+
+            var f10 = gui.addFolder('Asteroid Ring');
+            f10.add(asteroidsHolder.rotation, 'x', -10, 10).name('Position X').onChange(function(value) {
+              asteroidsHolder.rotation.x = mathRadians(value);
+            });
+
+            scene.add(asteroidsHolder);
+          });
+        }
+
+        initSky();
+        initStars();
+        initMars();
+        initAsteroids();
+      }
+      function initOrbitControls() {
+        orbit = new THREE.OrbitControls(camera, renderer.domElement);
+        orbit.autoRotate = true;
+        orbit.autoRotateSpeed = 5;
+        axisHelper = new THREE.AxisHelper(200);
+        axisHelper.visible = true;
+        scene.add(axisHelper);
+        orbit.update();
+      }
+      function onWindowResize() {
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        camera.updateMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      function init() {
+        initCamera();
+        initScene();
+        initRenderer();
+        // initOrbitControls();
+        initText();
+        initLights();
+        initObjects();
+      }
+      function animate() {
+        // setup loop so the scene renders at 60fps
+        requestAnimationFrame(animate);
+
+        newAsteroids.forEach(function(asteroid) {
+          asteroid.rotation.y += mathRandom(0, .1) / 100;
+        });
+
+        asteroids && (asteroids.rotation.y += 0.0001);
+        sky && (sky.rotation.y -= 0.00004);
+        stars && (stars.rotation.y -= 0.0001);
+        stars && (stars.rotation.z -= 0.0002);
+        marsShadow && (marsShadow.rotation.z += 0.00004);
+        marsGlow && (marsGlow.rotation.z += 0.00003);
+        marsShape && (marsShape.rotation.x += 0.00003);
+        marsShape && (marsShape.rotation.y += 0.00003);
+        marsShape && (marsShape.rotation.z += 0.00003);
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        // render scene & camera to viewport
+        render();
+      }
+      function render() {
+        renderer.render(scene, camera);
+      }
+      init();
+      animate();
+    </script>
+  </div>
+</body>
+</html>
