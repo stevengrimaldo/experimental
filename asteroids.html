@@ -24,7 +24,6 @@
   <div id="container"></div>
   <div id="scripts">
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
-    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/Detector.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/TrackballControls.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/libs/stats.min.js"></script>
@@ -36,17 +35,12 @@
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/MaskPass.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/CanvasRenderer.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/Projector.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/CopyShader.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DigitalGlitch.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DotScreenShader.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/RGBShiftShader.js"></script>
     <script>
-      if (!Detector.webgl) {
-        Detector.addGetWebGLMessage();
-      }
-
       var camera, scene, renderer, obj;
 
       function initCamera() {
@@ -169,9 +163,7 @@
 
             objLoader.options.convertUpAxis = true;
             objLoader.load(asteroidObj, function(collada) {
-
               var dae = collada.scene;
-              var skin = collada.skins[0];
 
               dae.position.set(0, 0, 0);
               dae.scale.set(1.5, 1.5, 1.5);

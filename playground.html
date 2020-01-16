@@ -233,7 +233,6 @@
     <script src="https://cdn.rawgit.com/goldfire/howler.js/master/dist/howler.min.js"></script>
     <script src="https://cdn.rawgit.com/dataarts/dat.gui/master/build/dat.gui.min.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
-    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/Detector.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/TrackballControls.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/libs/stats.min.js"></script>
@@ -244,7 +243,6 @@
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/MaskPass.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/CanvasRenderer.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/renderers/Projector.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/CopyShader.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/DigitalGlitch.js"></script>
@@ -252,9 +250,6 @@
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/shaders/RGBShiftShader.js"></script>
     <script>
       // upload this below
-      if (!Detector.webgl) {
-        Detector.addGetWebGLMessage();
-      }
       var scene, camera, renderer, marsGeometry, starsGeometry, marsMaterial, starsMaterial, mars, stars, ambientLight,
         directionalLight, marsTexture, starsTexture, marsBump, loader, asteroids, asteroidObj, asteroidsHolder,
         asteroidMat, pointLight, pointLight2, asteroidGeo, mesh, orbit, axisHelper, gui, sky, stars, planet, firstRing,
